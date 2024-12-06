@@ -7,7 +7,7 @@ from collections import Counter
 genres_csv = "fma_metadata/genres.csv"
 tracks_csv = "fma_metadata/tracks_trimmed.csv"
 mp3_folder = "fma_small"
-output_file = "mp3_titles_and_genres.txt"
+output_file = "mp3_titles_and_genres_small.txt"
 
 def load_genres(genres_csv):
     """Load genres from genres.csv into a dictionary, accounting for top-level genres."""
@@ -69,7 +69,7 @@ def match_mp3_files(mp3_folder, tracks, genres):
                         genre_id = tracks.get(track_id)
                         if genre_id is not None:
                             genre_title = genres.get(genre_id, "Unknown Genre")
-                            mp3_data.append((os.path.join(folder, filename), genre_title))
+                            mp3_data.append((os.path.join(folder, filename), genre_id, genre_title))
                     except ValueError:
                         continue  # Skip any invalid filenames
     return mp3_data
@@ -95,8 +95,10 @@ def count_genres(mp3_folder, tracks, genres):
 def write_output(output_file, mp3_data):
     """Write the MP3 file titles and their genres to an output file."""
     with open(output_file, 'w') as file:
-        for mp3_title, genre in mp3_data:
-            file.write(f"{mp3_title}: {genre}\n")
+        file.write("path,genre_id,genre_str\n")
+        for mp3_title, genre_id, genre in mp3_data:
+            # file_name = os.path.basename(mp3_title)
+            file.write(f"{mp3_title},{genre_id},{genre}\n")
             
 def main():
     genres, genre_track_count, top_level_map = load_genres(genres_csv)
@@ -116,3 +118,14 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# Genres that we will merge: 
+# Electronic, Ambient Electronic, techno
+# Rock, Indie-Rock, Psych-Rock
+# Hip-hop
+# Punk
+# Folk
+# Instrumental
+# Pop, experimental pop
+# Classical
